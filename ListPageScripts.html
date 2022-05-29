@@ -1,0 +1,252 @@
+<script>
+
+/* STARTER AND GLOBALS */
+
+let arrItems = []
+
+$('document').ready(() => {
+
+  spinner('on')
+
+  $('#btn-add-item').on('click', addItem)
+  $('#btn-clear-all').on('click', clearAll)
+  $('#btn-close').on('click', closePopup)
+
+  google.script.run
+    .withSuccessHandler(renderTable)
+    .apiCall('getListPageItems', listName)
+})
+
+function renderTable(items) {
+
+  arrItems = items.sort( (a,b) => {
+    if (a[2] < b[2]) { return -1}
+    if (a[2] > b[2]) { return 1}
+  })
+  
+  let table = `<table>`
+
+  // item [id, checked, itemName]
+  arrItems.forEach( item => {
+    table += `
+      <tr>
+        <td class="id" hidden>${item[0]}</td>
+        <td><input type="checkbox" class="checkbox" ${item[1]}> 
+        <td class="item-header">${item[2]}</td>
+        <td class="edit-button" title="Muokkaa nimeä">&#x270D;</td>
+        <td class="delete-button" title="Poista lista"> &#x2718;</td>
+      </tr>`
+  })
+  
+  table += `</table>`
+
+  $('#main-section').html(table)
+  $('.checkbox').change(selectItem)
+  $('.edit-button').on('click', editItemName)
+  $('.delete-button').on('click', removeItem)
+
+  spinner('off')
+}
+
+
+
+/* PAGE EVENT HANDLERS */
+
+function addItem() {
+
+  openPopup(
+    'Uusi nimike:',
+    '<input class="modal-header" id="txt-item-header">',
+    saveItem
+  )
+
+  $('#txt-item-header').focus()
+  $('#txt-item-header').keyup(event => {
+    if(event.which === 13){
+      saveItem()
+    }
+  })
+}
+
+
+function clearAll() {
+
+  openPopup(
+    'Tyhjennä kaikki:',
+    '',
+    clearSelections
+  )
+}
+
+
+function editItemName() {
+
+  const nameElement = $(this).siblings('.item-header')
+
+  const oldName = nameElement.text()
+  nameElement.html(`<input type="text" class="input-box" title="Return / Esc"value="${oldName}">`)
+
+  const inputBox = $('.input-box')
+  
+  inputBox.focus()
+  
+  inputBox.keyup(event => {
+    if(event.which === 13){
+      renameItem(nameElement, oldName)
+    }
+
+    if(event.which === 27){
+      inputBox.remove()
+      nameElement.text(oldName)
+    }
+  })
+
+  inputBox.blur(() => {
+    inputBox.remove()
+    nameElement.text(oldName)
+  })
+}
+
+
+
+function renameItem(nameElement, oldName) {
+
+  const inputBox = $('.input-box')
+  const id = parseInt(inputBox.parent().siblings('.id').text())
+  const newName = inputBox.val()
+
+  if(isUniqueName(newName) && newName !== '') {
+    spinner('on')
+    google.script.run
+      .withSuccessHandler(renderTable)
+      .apiCall('renameItem', listName, id, newName)
+    return
+  }
+  
+  if(newName === oldName) {
+    inputBox.remove()
+    nameElement.html(oldName)
+    return
+  }
+
+  alert('Nimi on jo olemassa!')
+
+}
+
+
+function removeItem() {
+
+  openPopup(
+    'Poistetaanko nimike:',
+    `<span id="item-id" hidden>${$(this).siblings('.id').text()} </span>${$(this).siblings('.item-header').text()}`,
+    deleteItem
+  )
+}
+
+
+function selectItem() {
+
+  const id = parseInt($(this).parent().siblings('.id').text())
+
+  google.script.run
+    .apiCall('checkItem', listName, id, $(this).prop('checked'))
+}
+
+
+/* POPUP CALLBACK FUNCTIONS */
+
+
+function openPopup(headerText, contentHtml, okCallback) {
+
+  $('#lbl-popup-header').text(headerText)
+  $('#popup-content').html(contentHtml)
+  $('#btn-ok').on('click', okCallback)
+  $('#popup').show()
+}
+
+function closePopup() {
+
+  $('.modal-content').html('')
+  $('#btn-ok').off('click')
+  $('#popup').hide()
+}
+
+
+function saveItem() {
+  
+  const itemName = $('#txt-item-header').val()
+
+  if (isUniqueName(itemName) && itemName !== '') {
+    spinner('on')
+    google.script.run
+      .withSuccessHandler(renderTable)
+      .apiCall('addItem', listName, itemName)
+    closePopup()
+    return
+  }
+
+  alert('Nimi on jo olemassa!')
+  $('#txt-item-header').focus()
+}
+
+
+function deleteItem() {
+
+  const id = parseInt($('#item-id').text())
+  spinner('on')
+
+  google.script.run
+    .withSuccessHandler(renderTable)
+    .apiCall('deleteItem', listName, id)
+
+  closePopup()
+}
+
+function clearSelections() {
+
+  spinner('on')
+
+  google.script.run
+    .withSuccessHandler(renderTable)
+    .apiCall('clearAll', listName)
+
+  closePopup()
+}
+
+
+/* HELPER FUNCTIONS */
+
+function isUniqueName(newName) {
+
+  const res =  arrItems.every( name => {
+    return (name[2] !== newName)
+  })
+
+  return res
+}
+
+
+function removeInputBox() {
+
+  $('.input-box').remove()
+  nameElement.text(oldName)
+}
+
+
+
+
+function spinner(status) {
+
+  if (status === 'on') {
+    $('#spinner').show()
+    return
+  }
+
+  if (status === 'off') {
+    $('#spinner').hide()
+    return
+  }
+
+}
+
+</script>

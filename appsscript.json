@@ -1,0 +1,25 @@
+{
+  "timeZone": "Europe/Bucharest",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "DbLib",
+        "version": "9",
+        "libraryId": "1nwB1mqycQUSXGJl0_2FxNnmc0_-ghGMEFYbF9VH7CcSttWxCLrzVajiz",
+        "developmentMode": false
+      },
+      {
+        "userSymbol": "t",
+        "version": "3",
+        "libraryId": "11l_SrvKPA_rofg5jyxFRny19812HA6VutAEAciI6blNAxr0BgcuVYFfv",
+        "developmentMode": false
+      }
+    ]
+  },
+  "webapp": {
+    "access": "MYSELF",
+    "executeAs": "USER_DEPLOYING"
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

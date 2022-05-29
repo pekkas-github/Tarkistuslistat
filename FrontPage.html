@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <base target="_top">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <?!= include('Styles') ?>
+  </head>
+
+  <body>
+    <div class="grid grid-wrapper" id='container'>
+
+      <div class="header header-left">
+        Tarkistuslistat
+      </div>
+
+      <div class="header header-right">
+          <button type="button" class="button" id="btn-add-list">
+            Uusi lista
+          </button>
+      </div>
+
+
+      <div class="content" id='main-section'>
+      </div>
+
+  
+      <div class="footer-left"></div>
+      <div class="footer-right">versio <?= version ?></div>
+
+    </div>
+
+    <div class="modal" id="popup">
+      <div class="popup-box">
+
+        <div class="popup-header">
+          <span id="lbl-popup-header"> (Header text here) </span>
+          <span class="popup-close" id="btn-close">&times;</span>
+        </div>
+        
+        <div id="popup-content"> (Popup content here) </div>
+
+        <div>
+          <button class="button" id="btn-ok">Ok</button>
+        </div>
+      
+      </div>
+    </div>
+
+    <div class="modal" id="spinner">
+      <div class="spinner-ring"></div>
+    </div>
+
+    <script>
+      const url = '<?!= url ?>'
+    </script>
+
+    <?!= include('FrontPageScripts') ?>  
+  </body>
+
+</html>
