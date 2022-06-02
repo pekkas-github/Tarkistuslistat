@@ -16,6 +16,7 @@ button, input {
 /* General Typography */
 
 html {
+  font-family: arial;
   font-size: 1.5vw;
 }
 
@@ -43,9 +44,18 @@ html {
   transform: scale(2);
 }
 
+tr:nth-child(even) {
+  background-color: #FAFAFA;
+}
+
+
+tr:nth-child(odd) {
+  background-color: #F0F0F0;
+}
+
 td, th {
-  padding: 0.5em .5em;
-  border-bottom: 1px solid lightgrey;
+  padding: 0.25em .5em;
+  border-bottom: 1px solid #F0F0F0;
   border-right: 1px solid lightgrey;
 }
 

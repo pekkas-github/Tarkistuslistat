@@ -44,7 +44,7 @@ function renderTable(items) {
   $('.checkbox').change(selectItem)
   $('.edit-button').on('click', editItemName)
   $('.delete-button').on('click', removeItem)
-
+  
   spinner('off')
 }
 
@@ -83,7 +83,7 @@ function editItemName() {
 
   const nameElement = $(this).siblings('.item-header')
 
-  const oldName = nameElement.text()
+  const oldName = nameElement.html()
   nameElement.html(`<input type="text" class="input-box" title="Return / Esc"value="${oldName}">`)
 
   const inputBox = $('.input-box')
@@ -138,7 +138,7 @@ function removeItem() {
 
   openPopup(
     'Poistetaanko nimike:',
-    `<span id="item-id" hidden>${$(this).siblings('.id').text()} </span>${$(this).siblings('.item-header').text()}`,
+    `<span id="item-id" hidden>${$(this).siblings('.id').text()} </span>< ${$(this).siblings('.item-header').text()} >`,
     deleteItem
   )
 }
