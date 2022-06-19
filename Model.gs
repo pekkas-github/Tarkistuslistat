@@ -28,12 +28,13 @@ class Model {
     const newRecord = table.getNewRecord()
 
     while (allRecords.hasNext) {
-      if (allRecords.get('list_item') === itemName) {
+      if (allRecords.get('list_item') === `<span>${itemName}</span>`) {
         return false
       }
       allRecords.next()
     }
     
+    itemName = '<span>' + itemName + '</span>'
     newRecord.set('list_item', itemName)
     table.insertOneRecord(newRecord)
     return true  
@@ -96,7 +97,15 @@ class Model {
 
   getItems(listName) {
 
-    const table = this.db.getTable(listName)
+    let table = {}
+    
+    try {
+      table = this.db.getTable(listName)
+    }
+    catch {
+      return false
+    }
+
     return table.getAllRecords().dataset
   }
 
@@ -119,6 +128,8 @@ class Model {
 
     const table = this.db.getTable(listName)
     const item = table.getOneRecord(id)
+
+    newName = '<span>' + newName + '</span>'
 
     item.set('list_item', newName)
     table.updateRecords(item)

@@ -7,25 +7,38 @@ function test() {
   const m = new Model()
   const ss = SpreadsheetApp.openByUrl(app.dbUrl)
 
+  const tbl1 = ss.getSheetByName('TestList1')
+  const tbl1_repl = ss.getSheetByName('xTestList1_repl')
+
+  t.beforeEach(() => {
+    const values = tbl1_repl.getRange(1, 1, 5, 3).getValues()
+    tbl1.clear()
+    tbl1.getRange(1, 1, 5, 3).setValues(values)
+  })
+
   t.run('getItems - Hae yksittäisen listan tiedot', () => {
 
     /* EXECUTE */
 
-    let listRecords = m.getItems('TestList1').dataset
+    let listRecords = m.getItems('TestList1')
 
     /* ASSERT */
 
     t.isEqual(listRecords.length, 2, 'Koko listan pituus')
     t.isEqual(listRecords[1][0], 2, 'Tietue id')
     t.isEqual(listRecords[1][1], 'checked', 'Valintatieto')
-    t.isEqual(listRecords[1][2], 'Item12', 'Nimikkeen nimi')
+    t.isEqual(listRecords[1][2], '<span>Item12</span>', 'Nimikkeen nimi')
   })
 
-  t.run('getItems - Hae listaa, jota ei ole olemassa -> ERROR', () => {
+  t.run('getItems - Hae listaa, jota ei ole olemassa', () => {
 
    /* EXECUTE */
 
     listRecords = m.getItems('TestList0')
+
+    /* ASSERT */
+
+    t.isEqual(listRecords, false, 'Operaation kuittaus')
 
   })
 
@@ -37,7 +50,7 @@ function test() {
 
     /* ASSERT */
 
-    t.isEqual(list.length, 2, 'Taulujen lukumäärä')
+    t.isEqual(list.length, 3, 'Taulujen lukumäärä')
     t.isEqual(list[0],'TestList1', 'Ensimmäisen taulun nimi')
     t.isEqual(list[1],'TestList2', 'Toisen taulun nimi')
   })
@@ -53,7 +66,7 @@ function test() {
     const lists = m.getLists()
 
     t.isEqual(response, true, 'Lisäyksen kuittaus')
-    t.isEqual(lists.length, 3, 'Taulujen lukumäärä')
+    t.isEqual(lists.length, 4, 'Taulujen lukumäärä')
   })
 
   t.run('addNewList - Taulun lisäys olemassa olevalla nimellä', () => {
@@ -67,7 +80,7 @@ function test() {
     const lists = m.getLists()
 
     t.isEqual(response, false, 'Taulu on jo olemassa')
-    t.isEqual(lists.length, 3, 'Uutta taulua ei luotu')
+    t.isEqual(lists.length, 4, 'Uutta taulua ei luotu')
 
   })
 
@@ -82,7 +95,7 @@ function test() {
     const lists = m.getLists()
 
     t.isEqual(response, true, 'Poiston kuittaus')
-    t.isEqual(lists.length, 2, 'Taulu on poistettu')
+    t.isEqual(lists.length, 3, 'Taulu on poistettu')
 
   })
 
@@ -97,7 +110,7 @@ function test() {
     const lists = m.getLists()
 
     t.isEqual(response, false, 'Taulua ei ole olemassa')
-    t.isEqual(lists.length, 2, 'Uusi taulukoita ei poistettu')
+    t.isEqual(lists.length, 3, 'Uusi taulukoita ei poistettu')
 
   })
 
@@ -157,7 +170,7 @@ function test() {
     t.isEqual(items.length, 3, 'Nimikkeiden lukumäärä')
     t.isEqual(items[2][0], 3, 'Tietue id')
     t.isEqual(items[2][1], '', 'Valintatieto')
-    t.isEqual(items[2][2], 'Item13', 'Nimikkeen nimi')
+    t.isEqual(items[2][2], '<span>Item13</span>', 'Nimikkeen nimi')
 
   })
 
@@ -165,13 +178,13 @@ function test() {
 
     /* EXECUTE */
 
-    const response = m.addItem('TestList1', 'Item13')
+    const response = m.addItem('TestList1', 'Item12')
 
     /* ASSERT */
 
     const items = m.getItems('TestList1')
     t.isEqual(response, false, 'Lisäyksen kuittaus')
-    t.isEqual(items.length, 3, 'Nimikkeiden lukumäärä')
+    t.isEqual(items.length, 2, 'Nimikkeiden lukumäärä')
 
   })
 
@@ -179,12 +192,12 @@ function test() {
 
     /* EXECUTE */
 
-    m.renameItem('TestList1', 3, 'NewName')
+    m.renameItem('TestList1', 2, 'NewName')
 
     /*ASSERT */
 
     const items = m.getItems('TestList1')
-    t.isEqual(items[2][2], 'NewName', 'Muutettu nimi')
+    t.isEqual(items[1][2], '<span>NewName</span>', 'Muutettu nimi')
 
   })
 
@@ -192,14 +205,14 @@ function test() {
 
     /* EXECUTE */
 
+    m.checkItem('TestList1', 1, true)
     m.checkItem('TestList1', 2, false)
-    m.checkItem('TestList1', 3, true)
 
     /* ASSERT */
 
     const items = m.getItems('TestList1')
+    t.isEqual(items[0][1], 'checked', 'Valinta asetettu')
     t.isEqual(items[1][1], '', 'Valinta poistettu')
-    t.isEqual(items[2][1], 'checked', 'Valinta asetettu')
 
   })
 
@@ -216,8 +229,8 @@ function test() {
     /* ASSERT */
 
     const items = m.getItems('TestList1')
+    t.isEqual(items[0][1], '', 'Merkintä poistettu')
     t.isEqual(items[1][1], '', 'Merkintä poistettu')
-    t.isEqual(items[2][1], '', 'Merkintä poistettu')
 
   })
 
@@ -225,23 +238,13 @@ function test() {
 
     /* EXECUTE */
 
-    m.deleteItem('TestList1', 3)
+    m.deleteItem('TestList1', 2)
     const items = m.getItems('TestList1')
 
     /* ASSERT */
 
-    t.isEqual(items.length, 2, 'Nimikkeiden määrä')
+    t.isEqual(items.length, 1, 'Nimikkeiden määrä')
 
-    /* RESET*/
-
-    const sheet = ss.getSheetByName('TestList1') 
-    const rng = sheet.getRange(1, 1, 5, 3)
-    const values = rng.getValues()
-
-    values[1][0] = 2
-    values[4][1] = 'checked'
-
-    rng.setValues(values)
   
   })
 

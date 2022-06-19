@@ -6,7 +6,7 @@ let arrItems = []
 
 $('document').ready(() => {
 
-  spinner('on')
+  spinner.on()
 
   $('#btn-add-item').on('click', addItem)
   $('#btn-clear-all').on('click', clearAll)
@@ -20,8 +20,10 @@ $('document').ready(() => {
 function renderTable(items) {
 
   arrItems = items.sort( (a,b) => {
-    if (a[2] < b[2]) { return -1}
-    if (a[2] > b[2]) { return 1}
+    const a2 = $(a[2]).text().toLowerCase()
+    const b2 = $(b[2]).text().toLowerCase()
+    if (a2 < b2) { return -1}
+    if (a2 > b2) { return 1}
   })
   
   let table = `<table>`
@@ -45,7 +47,7 @@ function renderTable(items) {
   $('.edit-button').on('click', editItemName)
   $('.delete-button').on('click', removeItem)
   
-  spinner('off')
+  spinner.off()
 }
 
 
@@ -116,7 +118,7 @@ function renameItem(nameElement, oldName) {
   const newName = inputBox.val()
 
   if(isUniqueName(newName) && newName !== '') {
-    spinner('on')
+    spinner.on()
     google.script.run
       .withSuccessHandler(renderTable)
       .apiCall('renameItem', listName, id, newName)
@@ -177,7 +179,7 @@ function saveItem() {
   const itemName = $('#txt-item-header').val()
 
   if (isUniqueName(itemName) && itemName !== '') {
-    spinner('on')
+    spinner.on()
     google.script.run
       .withSuccessHandler(renderTable)
       .apiCall('addItem', listName, itemName)
@@ -193,7 +195,7 @@ function saveItem() {
 function deleteItem() {
 
   const id = parseInt($('#item-id').text())
-  spinner('on')
+  spinner.on()
 
   google.script.run
     .withSuccessHandler(renderTable)
@@ -204,7 +206,7 @@ function deleteItem() {
 
 function clearSelections() {
 
-  spinner('on')
+  spinner.on()
 
   google.script.run
     .withSuccessHandler(renderTable)
@@ -232,21 +234,9 @@ function removeInputBox() {
   nameElement.text(oldName)
 }
 
-
-
-
-function spinner(status) {
-
-  if (status === 'on') {
-    $('#spinner').show()
-    return
-  }
-
-  if (status === 'off') {
-    $('#spinner').hide()
-    return
-  }
-
+const spinner = {
+  on: () => {$('#spinner').show()},
+  off: () => {$('#spinner').hide()}
 }
 
 </script>
