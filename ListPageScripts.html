@@ -18,12 +18,17 @@ $('document').ready(() => {
 })
 
 function renderTable(items) {
+console.log(items)
+console.log($(`<p> ${items[0][2]}</p>`).text().toLowerCase())
+console.log($(`<p> ${items[1][2]}</p>`).text().toLowerCase())
+console.log($(`<p> ${items[2][2]}</p>`).text().toLowerCase())
 
   arrItems = items.sort( (a,b) => {
-    const a2 = $(a[2]).text().toLowerCase()
-    const b2 = $(b[2]).text().toLowerCase()
+    const a2 = $(`<p> ${a[2]}</p>`).text().toLowerCase()
+    const b2 = $(`<p> ${b[2]}</p>`).text().toLowerCase()
     if (a2 < b2) { return -1}
     if (a2 > b2) { return 1}
+    return 0
   })
   
   let table = `<table>`
