@@ -18,10 +18,6 @@ $('document').ready(() => {
 })
 
 function renderTable(items) {
-console.log(items)
-console.log($(`<p> ${items[0][2]}</p>`).text().toLowerCase())
-console.log($(`<p> ${items[1][2]}</p>`).text().toLowerCase())
-console.log($(`<p> ${items[2][2]}</p>`).text().toLowerCase())
 
   arrItems = items.sort( (a,b) => {
     const a2 = $(`<p> ${a[2]}</p>`).text().toLowerCase()
@@ -91,7 +87,7 @@ function editItemName() {
   const nameElement = $(this).siblings('.item-header')
 
   const oldName = nameElement.html()
-  nameElement.html(`<input type="text" class="input-box" title="Return / Esc"value="${oldName}">`)
+  nameElement.html(`<input type="text" class="input-box" title="Return / Esc"value='${oldName}'>`)
 
   const inputBox = $('.input-box')
   
@@ -104,13 +100,13 @@ function editItemName() {
 
     if(event.which === 27){
       inputBox.remove()
-      nameElement.text(oldName)
+      nameElement.html(oldName)
     }
   })
 
   inputBox.blur(() => {
     inputBox.remove()
-    nameElement.text(oldName)
+    nameElement.html(oldName)
   })
 }
 

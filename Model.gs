@@ -28,13 +28,12 @@ class Model {
     const newRecord = table.getNewRecord()
 
     while (allRecords.hasNext) {
-      if (allRecords.get('list_item') === `<span>${itemName}</span>`) {
+      if (allRecords.get('list_item') === itemName) {
         return false
       }
       allRecords.next()
     }
     
-    itemName = '<span>' + itemName + '</span>'
     newRecord.set('list_item', itemName)
     table.insertOneRecord(newRecord)
     return true  
@@ -128,8 +127,6 @@ class Model {
 
     const table = this.db.getTable(listName)
     const item = table.getOneRecord(id)
-
-    newName = '<span>' + newName + '</span>'
 
     item.set('list_item', newName)
     table.updateRecords(item)

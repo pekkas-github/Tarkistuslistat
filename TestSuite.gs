@@ -1,4 +1,4 @@
-//app.dbUrl = 'https://docs.google.com/spreadsheets/d/1MbNoXjJj22XkY-zHuCYHMlb2N5w6eeEAqOuLFKBE9jc/edit#gid=0'
+app.dbUrl = 'https://docs.google.com/spreadsheets/d/1MbNoXjJj22XkY-zHuCYHMlb2N5w6eeEAqOuLFKBE9jc/edit#gid=0'
 app.version = 'dev'
 
 
