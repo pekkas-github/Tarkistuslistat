@@ -12,7 +12,7 @@ class Controller {
     html.url = ScriptApp.getService().getUrl()
     html.version = app.version
 
-    return html.evaluate().setTitle('Tarkistuslistat')
+    return html.evaluate().setTitle('Tarkistuslistat').setFaviconUrl('https://cdn.icon-icons.com/icons2/1473/PNG/512/074checklist_101554.png')
   }
 
   loadListPage (params) {
