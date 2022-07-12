@@ -1,0 +1,25 @@
+<script>
+
+  const listsHeaderView = (function() {
+
+    function render() {
+
+      const header = 'Tarkistuslistat'
+
+      const button = `
+        <button type="button" class="button" id="btn-add-list">
+          Uusi lista
+        </button>`
+
+    $('.header-left').html(header)
+    $('.header-right').html(button)
+
+    /* LISTENER */
+    $('#btn-add-list').on('click', listsController.addList)
+    }
+
+    return {
+      render: render
+    }
+  })()
+</script>

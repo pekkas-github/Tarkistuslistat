@@ -1,0 +1,99 @@
+<script>
+const itemsController = (function() {
+
+  // Aloitetaan uuden nimikkeen lisäys avaamalla popup
+  function addItemRequest() {
+    //Määritä sisältö ja callback ja välitä view:lle avattavaksi
+    popup.input({
+      header: 'Uusi nimike',
+      content: ' Nimikkeen nimi',
+      callback: itemsController.addItemConfirm
+    })
+  }
+
+  // Uuden nimikkeen talletus
+  function addItemConfirm(itemName) {
+    //Lähetä modelille talletettavaksi
+    itemsModel.addItem(itemName)
+
+  }
+
+  function changeSelectionRequest(id, checked) {
+    itemsModel.selectItem(id, checked)
+  }
+
+  function clearAllRequest() {
+    popup.info({
+      header: 'Tyhjennä kaikki:',
+      content: '',
+      callback: itemsController.clearAllConfirm
+    })
+  }
+
+  function clearAllConfirm() {
+    itemsModel.clearAll()
+  }
+
+  function deleteItemRequest(id, itemName) {
+    popup.info({
+      header: 'Poistetaanko nimike:',
+      content: `<i> ${itemName} </i>`,
+      callback: itemsController.deleteItemConfirm,
+      param: id
+    })
+  }
+
+  function deleteItemConfirm(id) {
+    itemsModel.removeItem(id)
+  }
+
+  // Serverivirheen näyttäminen ja listan uudelleen lataaminen
+  function errorAlertResponse(info) {
+    //Näytä virheilmoitus
+    alert(info)
+    //Pyydä modelilta freshLoad
+    spinner.on()
+    itemsModel.freshLoad()
+  }
+
+  // Sivun sisällön alkulataus
+  function initialLoadRequest(listName) {
+    spinner.on()
+    itemsHeaderView.render(listName)
+    itemsModel.setListName(listName)
+    itemsModel.freshLoad()
+  }
+
+  function renameItem(id, newName) {
+    itemsModel.renameItem(id, newName)
+  }
+
+  function returnToLists() {
+    listsController.initialLoad()
+  }
+
+  // Näytön päivitys paikallisten tietojen muututtua
+  function stateChangedResponse(data) {
+    //Välitä viewlle data renderöitäväksi
+    itemsTableView.render(data)
+
+  }
+
+  return {
+    addItem: addItemRequest,
+    addItemConfirm: addItemConfirm,
+    changeSelection: changeSelectionRequest,
+    clearAll: clearAllRequest,
+    clearAllConfirm: clearAllConfirm,
+    dataChanged: stateChangedResponse,
+    deleteItem: deleteItemRequest,
+    deleteItemConfirm: deleteItemConfirm,
+    errorAlert: errorAlertResponse,
+    initialLoad: initialLoadRequest,
+    renameItem: renameItem,
+    returnToLists: returnToLists
+  }
+
+})()
+
+</script>

@@ -1,0 +1,140 @@
+<script>
+  const itemsModel = (function() {
+
+  let items = []
+  let listName = ''
+
+  function freshLoad () {
+    google.script.run
+      .withFailureHandler((err) => {
+        alert(`Server: ${err}`)
+      })
+      .withSuccessHandler((data) => {
+        items = data
+        itemsController.dataChanged(items)
+      })
+      .apiCall('getListPageItems', listName)
+  }
+
+/* ADD ITEM */
+
+function addItem(itemName) {
+  if (!isUniqueName(itemName) || itemName === '') {
+    alert('Client: Nimi on jo olemassa!')
+    return
+  }
+
+  // lisää rivi lokaaliin taulukkoon
+  const newItem = [0, '', itemName]
+  items.push(newItem)
+  itemsController.dataChanged(items)
+
+  google.script.run
+    .withFailureHandler((err) => {
+      itemsController.errorAlert(err)
+    })
+    .withSuccessHandler((id) => {
+      items.forEach( (item) => {
+        if (item[0] === 0) {
+          item[0] = id
+          itemsController.dataChanged(items)
+        }
+      })
+    })
+    .apiCall('addItem', listName, itemName)
+}
+
+
+/* CLEAR ALL */
+
+function clearAll() {
+
+  items.forEach( (item) => {
+    item[1] = ''
+  })
+  itemsController.dataChanged(items)
+
+  google.script.run
+  .withFailureHandler((err) => {
+    itemsController.errorAlert(err)
+  })
+  .apiCall('clearAll', listName)
+}
+
+/* REMOVE ITEM */
+
+function removeItem(id) {
+
+  const index = items.findIndex( (item) => {
+    return item[0] === id
+  })
+  items.splice(index, 1)
+  itemsController.dataChanged(items)
+  
+  google.script.run
+    .withFailureHandler((err) => {
+      itemsController.errorAlert(err)
+    })
+    .apiCall('deleteItem', listName, id)
+}
+
+/* RENAME ITEM */
+
+function renameItem (id, newName) {
+
+  if(!isUniqueName(newName) || newName === '') {
+    alert('Client: Nimi on jo olemassa!')
+    return
+  }
+
+  items.forEach( (item) => {
+    if (item[0] === id) {
+      item[2] = newName
+    }
+  })
+  itemsController.dataChanged(items)
+
+  google.script.run
+    .withFailureHandler((err) => {
+      itemsController.errorAlert(err)
+    })
+    .apiCall('renameItem', listName, id, newName)  
+}
+
+/* SELECT ITEM */
+
+function selectItem(id, checked) {
+
+  google.script.run
+    .withFailureHandler((err) => {
+      itemsController.errorAlert(err)
+    })
+    .apiCall('checkItem', listName, id, checked)
+}
+
+function setListName(listname) {
+  listName = listname
+}
+
+/*--- UTILITIES ---*/
+
+function isUniqueName(newName) {
+
+  const res =  items.every( name => {
+    return (name[2] !== newName)
+  })
+
+  return res
+}
+
+return {
+  setListName: setListName,
+  addItem: addItem,
+  clearAll: clearAll,
+  freshLoad: freshLoad,
+  removeItem: removeItem,
+  renameItem: renameItem,
+  selectItem: selectItem
+}
+  })()
+</script>

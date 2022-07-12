@@ -1,0 +1,96 @@
+<script>
+
+const itemsTableView = (function() {
+
+
+  /*--- FRESH LOAD ---*/
+
+
+  /*--- CONTENT RENDERING ---*/
+
+  function renderTable (items) {
+    // Sort items in alphabetical order based on the content text
+    items.sort( (a,b) => {
+      const a2 = $(`<p> ${a[2]}</p>`).text().toLowerCase()
+      const b2 = $(`<p> ${b[2]}</p>`).text().toLowerCase()
+      if (a2 < b2) { return -1}
+      if (a2 > b2) { return 1}
+      return 0
+    })
+    
+    // Build the list view
+    let table = `<table>`
+
+    // item [id, checked, itemName]
+    items.forEach( item => {
+      table += `
+        <tr id="${item[0]}">
+          <td><input type="checkbox" class="checkbox" ${item[1]}> 
+          <td class="item-header">${item[2]}</td>
+          <td class="edit-button" title="Muokkaa nimeä">&#x270D;</td>
+          <td class="delete-button" title="Poista lista"> &#x2718;</td>
+        </tr>`
+    })
+    
+    table += `</table>`
+
+    // Import the table element into DOM
+    $('#main-section').html(table)
+
+    // Define Event Listnenrs and callback functions
+    $('.checkbox').change(function() {
+      const id = parseInt($(this).parent().parent().attr('id'))
+      const checked = $(this).prop('checked')
+      itemsController.changeSelection(id, checked)
+    })
+
+    $('.edit-button').on('click', function() {
+
+      const nameElement = $(this).siblings('.item-header')
+      const oldName = nameElement.html()
+      nameElement.html(`<input type="text" class="input-box" title="Return / Esc" value='${oldName}'>`)
+      const id = parseInt($(this).parent().attr('id'))
+      const inputBox = $('.input-box')
+      
+      inputBox.keyup(event => {
+        if(event.which === 13){
+          const newName = inputBox.val()
+          if (newName === oldName) {
+            inputBox.remove()
+            nameElement.html(oldName)
+            return
+          }
+          itemsController.renameItem(id, newName)
+        }
+
+        if(event.which === 27){
+          inputBox.remove()
+          nameElement.html(oldName)
+        }
+      })
+
+      inputBox.blur(() => {
+        inputBox.remove()
+        nameElement.html(oldName)
+      })
+
+      inputBox.focus()
+
+    })
+
+    $('.delete-button').on('click', function() {
+
+      const id = parseInt($(this).parent().attr('id'))
+      const itemName = $(this).siblings('.item-header').text()
+      itemsController.deleteItem(id, itemName)
+    })
+    
+    spinner.off()
+    popup.close()
+  }
+
+  return {
+    render: renderTable
+  }
+})()
+</script>

@@ -13,11 +13,10 @@ class Model {
       ss.insertSheet().setName(listName)
       const data = [['last_id', 'top_row', ''], [0, 4, '' ], ['id', 'checked', 'list_item']]
       ss.getSheetByName(listName).getRange(1, 1, 3, 3).setValues(data)
-      return true
+      return
     }
-    else {
-      return false
-    }
+
+    throw (`Server Error: Lista ${listName} on jo olemassa.`)
   }
 
 
@@ -29,30 +28,34 @@ class Model {
 
     while (allRecords.hasNext) {
       if (allRecords.get('list_item') === itemName) {
-        return false
+        throw (`Server Error: Nimike ${itemName} on jo olemassa`)
       }
       allRecords.next()
     }
     
     newRecord.set('list_item', itemName)
     table.insertOneRecord(newRecord)
-    return true  
+    return table.getLastId()
   }
 
 
   checkItem(listName, id, checked) {
 
     const table = this.db.getTable(listName)
-    const item = table.getOneRecord(id)
+    try {
+      const item = table.getOneRecord(id)
 
-    if (checked) {
-      item.set('checked', 'checked')
-    } else {
-      item.set('checked', '')
-    }  
-    
-    table.updateRecords(item)
-
+      if (checked) {
+        item.set('checked', 'checked')
+      } else {
+        item.set('checked', '')
+      }  
+      
+      table.updateRecords(item)
+    }
+    catch (err) {
+      throw (`Server Error: ${err}`)
+    }
   }
 
 
@@ -75,7 +78,12 @@ class Model {
 
     const table = this.db.getTable(listName)
 
-    table.deleteOneRecord(id)
+    try {
+      table.deleteOneRecord(id)
+    }
+    catch (err) {
+      throw (`Server Error: ${err}`)
+    }
   }
 
 
@@ -85,27 +93,23 @@ class Model {
     const sheet = ss.getSheetByName(listName)
 
     if(sheet === null) {
-      return false
+      throw (`Server Error: Listaa nimeltä "${listName}" ei tunnistettu.`)
     }
-    else {
-      ss.deleteSheet(sheet)
-      return true
-    }
+
+    ss.deleteSheet(sheet)
   }
 
 
   getItems(listName) {
 
-    let table = {}
-    
     try {
-      table = this.db.getTable(listName)
+      const table = this.db.getTable(listName)
+      return table.getAllRecords().dataset
     }
     catch {
-      return false
+      throw (`Server Error: Listaa nimeltä "${listName}" ei tunnistettu.`)
     }
 
-    return table.getAllRecords().dataset
   }
 
 
@@ -114,23 +118,28 @@ class Model {
     const ss = SpreadsheetApp.openByUrl(app.dbUrl)
     const sheets = ss.getSheets()
 
-    let list = []
+    let lists = []
     sheets.forEach(sheet => {
-      list.push(sheet.getName())
+      lists.push(sheet.getName())
     })
 
-    return list.sort()
+    return lists
   }
 
 
   renameItem(listName, id, newName) {
 
     const table = this.db.getTable(listName)
-    const item = table.getOneRecord(id)
 
-    item.set('list_item', newName)
-    table.updateRecords(item)
+    try{
+      const item = table.getOneRecord(id)
 
+      item.set('list_item', newName)
+      table.updateRecords(item)
+    }
+    catch (err) {
+      throw (`Server Error: ${err}`)
+    }
   }
 
 
@@ -141,14 +150,11 @@ class Model {
     const table2 = ss.getSheetByName(newName)
 
     if (table1 === null || table2 !== null) {
-      return false
+      throw (`Server Error: Listaa  ${table1} ei löydy tai uusi nimi ${table2} on jo olemassa`)
     }
 
     table1.setName(newName)
-    return true
   }
-
-
 
 }
 

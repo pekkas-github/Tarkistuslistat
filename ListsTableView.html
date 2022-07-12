@@ -1,0 +1,85 @@
+<script>
+  const listsTableView = (function() {
+
+    function render(lists) {
+      lists.sort( (a,b) => {
+        if (a.toLowerCase() < b.toLowerCase()) { return -1}
+        if (a.toLowerCase() > b.toLowerCase()) { return 1}
+        return 0
+      })
+
+      let table = `<table>`
+
+      lists.forEach( list => {
+        table += `
+          <tr>
+            <td class="list-header" title="Avaa lista (dblClick)">${list}</td>
+            <td class="icon edit-button" title="Muokkaa nimeä">&#x270D;</td>
+            <td class="icon delete-button" title="Poista lista"> &#x2718;</td>
+          </tr>`
+      })
+      
+      table += `</table>`
+
+      $('#main-section').html(table)
+
+      $('.edit-button').on('click', function() {
+        const nameElement = $(this).siblings('.list-header')
+        const oldName = nameElement.text()
+        nameElement.html(`<input type="text" class="input-box" title="Return / Esc"value="${oldName}">`)
+
+        const inputBox = $('.input-box')
+
+        // Stop event from bubbling and to open the list 
+        inputBox.on('click', () => {
+          event.stopPropagation()
+        })
+
+        inputBox.keyup(event => {
+          if(event.which === 13){
+            const newName = inputBox.val()
+            if (newName === oldName) {
+              inputBox.remove()
+              nameElement.text(oldName)
+              return
+            }
+            listsController.renameList(newName, oldName)
+          }
+
+          if(event.which === 27){
+            inputBox.remove()
+            nameElement.text(oldName)
+          }
+        })
+        
+        inputBox.blur(() => {
+          inputBox.remove()
+          nameElement.text(oldName)
+        })
+
+        inputBox.focus()  
+
+      })
+      
+      $('.delete-button').on('click', function() {
+        const listName = $(this).siblings('.list-header').text()
+
+        listsController.removeList(listName)
+        })
+
+      $('.list-header').on('click', function() {
+        $(this).css('background-color', 'lightgrey')
+        const listName = $(this).text()
+        listsController.openList(listName)
+      })
+      
+      spinner.off()
+      popup.close()
+
+    }
+
+    return {
+      render: render
+    }
+  })()
+</script>

@@ -10,7 +10,6 @@ const route = {}
 
 // pages
 route.frontPage = controller.loadFrontPage
-route.listPage = controller.loadListPage  
 
 //data
 route.createList = controller.createList.bind(controller)

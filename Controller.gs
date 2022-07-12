@@ -7,32 +7,22 @@ class Controller {
 
   loadFrontPage (e) {
 
-    const html = HtmlService.createTemplateFromFile('FrontPage')
+    const html = HtmlService.createTemplateFromFile('Index')
 
-    html.url = ScriptApp.getService().getUrl()
     html.version = app.version
 
-    return html.evaluate().setTitle('Tarkistuslistat').setFaviconUrl('https://cdn.icon-icons.com/icons2/1473/PNG/512/074checklist_101554.png')
+    return html
+      .evaluate()
+      .setTitle('Tarkistuslistat')
+      .setFaviconUrl(app.favicon)
   }
-
-  loadListPage (params) {
-
-    const html = HtmlService.createTemplateFromFile('ListPage')
-
-    html.listName = params.listName
-    html.version = app.version
-
-    return html.evaluate().setTitle('Tarkistuslistat')
-  }
-  
 
   addItem (params) {
 
     const listName = params[0]
     const itemName = params[1]
 
-    this.model.addItem(listName, itemName)
-    return this.model.getItems(listName)
+    return this.model.addItem(listName, itemName)
   }
 
   checkItem (params) {

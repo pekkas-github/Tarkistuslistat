@@ -30,32 +30,22 @@
 
     </div>
 
-    <div class="modal" id="popup">
-      <div class="popup-box">
-
-        <div class="popup-header">
-          <span id="lbl-popup-header"> (Header text here) </span>
-          <span class="popup-close" id="btn-close">&times;</span>
-        </div>
-        
-        <div id="popup-content"> (Popup content here) </div>
-
-        <div>
-          <button class="button" id="btn-ok">Ok</button>
-        </div>
-      
-      </div>
-    </div>
-
-    <div class="modal" id="spinner">
-      <div class="spinner-ring"></div>
-    </div>
-
     <script>
-      const url = '<?!= url ?>'
+      $('document').ready(() => {
+        listsController.initialLoad()
+      })
     </script>
 
-    <?!= include('FrontPageScripts') ?>  
-  </body>
+    <?!= include('ListsController') ?>
+    <?!= include('ListsModel') ?>
+    <?!= include('ListsHeaderView') ?>
+    <?!= include('ListsTableView') ?>
+    <?!= include('ItemsController') ?>
+    <?!= include('ItemsModel') ?>
+    <?!= include('ItemsHeaderView') ?>
+    <?!= include('ItemsTableView') ?>
+    <?!= include('PopupComponent') ?>
+    <?!= include('SpinnerComponent') ?>
+   </body>
 
 </html>

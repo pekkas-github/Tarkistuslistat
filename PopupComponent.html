@@ -1,0 +1,91 @@
+<style>
+.popup-box {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 25%;
+  text-align: center;
+}
+
+.popup-box div {
+  margin: 0.5em 0em;
+}
+
+.popup-header {
+  padding: 0.2em;
+}
+
+.popup-close {
+  background-color: #eeeeee;
+  padding: 0em 0.4em;
+  float: right;
+}
+
+.popup-close:hover {
+  background-color: #dddddd;
+  cursor: pointer;
+}
+</style>
+
+<!-- HTML PART -->
+
+<div class="modal" id="popup">
+  <div class="popup-box">
+
+    <div class="popup-header">
+      <span id="lbl-popup-header"> (Header text here) </span>
+      <span class="popup-close" id="btn-popup-close">&times;</span>
+    </div>
+    
+    <div id="popup-content"> (Popup content here) </div>
+
+    <div>
+      <button class="button" id="btn-popup-ok">Ok</button>
+    </div>
+  
+  </div>
+</div>
+
+<!-- JAVASCRIPT PART -->
+
+<script>
+
+const popup = {
+
+  info: ({header, content, callback, param}) => {
+    $('#lbl-popup-header').text(header)
+    $('#popup-content').html(content)
+    $('#btn-popup-ok').on('click', function() {
+      callback(param)
+    })
+    $('#popup').show()
+  },
+
+  input: ({header, content, callback}) => {
+    $('#lbl-popup-header').text(header)
+    $('#popup-content').html(`<input id="txt-input" placeholder="${content}">`)
+    
+    $('#btn-popup-ok').on('click', function() {
+      callback($('#txt-input').val())
+    })
+    
+    $('#txt-input').keyup(event => {
+      if(event.which === 13){
+        callback($('#txt-input').val())
+      }
+    })
+    
+    $('#popup').show()
+    $('#txt-input').focus()
+  }, 
+
+  close: () => {
+    $('#btn-popup-ok').off('click')
+    $('#popup').hide()
+  }
+}
+
+$('#btn-popup-close').on('click', popup.close)
+
+</script>

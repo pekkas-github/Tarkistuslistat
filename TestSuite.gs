@@ -27,18 +27,16 @@ function test() {
     t.isEqual(listRecords.length, 2, 'Koko listan pituus')
     t.isEqual(listRecords[1][0], 2, 'Tietue id')
     t.isEqual(listRecords[1][1], 'checked', 'Valintatieto')
-    t.isEqual(listRecords[1][2], '<span>Item12</span>', 'Nimikkeen nimi')
+    t.isEqual(listRecords[1][2], 'Item12', 'Nimikkeen nimi')
   })
 
-  t.run('getItems - Hae listaa, jota ei ole olemassa', () => {
+  t.run('getItems - Hae listaa, jota ei ole olemassa (ERROR)', () => {
 
    /* EXECUTE */
 
     listRecords = m.getItems('TestList0')
 
     /* ASSERT */
-
-    t.isEqual(listRecords, false, 'Operaation kuittaus')
 
   })
 
@@ -51,8 +49,6 @@ function test() {
     /* ASSERT */
 
     t.isEqual(list.length, 3, 'Taulujen lukumäärä')
-    t.isEqual(list[0],'TestList1', 'Ensimmäisen taulun nimi')
-    t.isEqual(list[1],'TestList2', 'Toisen taulun nimi')
   })
 
   t.run('addNewList - Uusi taulu uudella nimellä', () => {
@@ -65,11 +61,10 @@ function test() {
 
     const lists = m.getLists()
 
-    t.isEqual(response, true, 'Lisäyksen kuittaus')
     t.isEqual(lists.length, 4, 'Taulujen lukumäärä')
   })
 
-  t.run('addNewList - Taulun lisäys olemassa olevalla nimellä', () => {
+  t.run('addNewList - Taulun lisäys olemassa olevalla nimellä (ERROR)', () => {
 
     /* EXECUTE */
 
@@ -78,9 +73,6 @@ function test() {
     /* ASSERT */
 
     const lists = m.getLists()
-
-    t.isEqual(response, false, 'Taulu on jo olemassa')
-    t.isEqual(lists.length, 4, 'Uutta taulua ei luotu')
 
   })
 
@@ -94,12 +86,11 @@ function test() {
 
     const lists = m.getLists()
 
-    t.isEqual(response, true, 'Poiston kuittaus')
     t.isEqual(lists.length, 3, 'Taulu on poistettu')
 
   })
 
-  t.run('deleteList - Poistettavaa taulua ei ole olemassa', () => {
+  t.run('deleteList - Poistettavaa taulua ei ole olemassa (=> ERROR)', () => {
 
     /* EXECUTE */
 
@@ -109,8 +100,7 @@ function test() {
 
     const lists = m.getLists()
 
-    t.isEqual(response, false, 'Taulua ei ole olemassa')
-    t.isEqual(lists.length, 3, 'Uusi taulukoita ei poistettu')
+    t.isEqual(lists.length, 3, 'Uusia taulukoita ei poistettu')
 
   })
 
@@ -122,12 +112,11 @@ function test() {
 
     /* ASSERT */
 
-    t.isEqual(response, true, 'Listan nimi on muutettu')
-    t.isEqual(m.getLists()[0], 'RenamedList', 'Nimi muutettu')
+    t.isEqual(m.getLists().sort()[0], 'RenamedList', 'Nimi muutettu')
 
   })
 
-  t.run('renameList - Nimettävää listaa ei löydy ja uusi nimi on uniikki', () => {
+  t.run('renameList - Nimettävää listaa ei löydy ja uusi nimi on uniikki (=> ERROR)', () => {
 
     /* EXECUTE */
 
@@ -135,12 +124,11 @@ function test() {
 
     /* ASSERT */
 
-    t.isEqual(response, false, 'Nimettävää listaa ei ole')
-
+  
   })
 
 
-  t.run('renameList - Uusi nimi on jo käytössä', () => {
+  t.run('renameList - Uusi nimi on jo käytössä (=> ERROR)', () => {
 
     /* EXECUTE */
 
@@ -148,13 +136,11 @@ function test() {
 
     /* ASSERT */
 
-    t.isEqual(response, false, 'Nimi on jo käytössä')
-
-    /* RESET */
-
-    ss.getSheetByName('RenamedList').setName('TestList1')
   })
 
+  /* RESET */
+
+  ss.getSheetByName('RenamedList').setName('TestList1')
 
 
    t.run('addItem - Uusi nimike uudella nimellä', () => {
@@ -166,11 +152,11 @@ function test() {
     /* ASSERT */
 
     const items = m.getItems('TestList1')
-    t.isEqual(response, true, 'Lisäyksen kuittaus')
+    t.isEqual(response, 3, 'Nimikkeen id')
     t.isEqual(items.length, 3, 'Nimikkeiden lukumäärä')
     t.isEqual(items[2][0], 3, 'Tietue id')
     t.isEqual(items[2][1], '', 'Valintatieto')
-    t.isEqual(items[2][2], '<span>Item13</span>', 'Nimikkeen nimi')
+    t.isEqual(items[2][2], 'Item13', 'Nimikkeen nimi')
 
   })
 
@@ -197,7 +183,7 @@ function test() {
     /*ASSERT */
 
     const items = m.getItems('TestList1')
-    t.isEqual(items[1][2], '<span>NewName</span>', 'Muutettu nimi')
+    t.isEqual(items[1][2], 'NewName', 'Muutettu nimi')
 
   })
 
@@ -248,5 +234,13 @@ function test() {
   
   })
 
+}
+
+function runSingleTest() {
+  const m = new Model()
+  
+  t.run('deleteList - Taulua ei löydy', () => {
+    m.deleteList('Huihai')
+  })
 }
 

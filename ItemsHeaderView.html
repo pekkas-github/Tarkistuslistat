@@ -1,0 +1,34 @@
+<script>
+
+
+const itemsHeaderView = (function() {
+
+  function render(listName) {
+
+
+    const buttons = `
+      <button type="button" class="button" id="btn-add-item">
+        Uusi nimike
+      </button>
+      <button type="button" class="button" id="btn-clear-all">
+        Tyhjennä kaikki
+      </button>
+      <span id="btn-back">&#8617;</span>
+    `
+    $('.header-right').html(buttons)
+    $('.header-left').html(listName)
+
+    /* LISTENERS */
+
+    $('#btn-add-item').on('click', itemsController.addItem)
+
+    $('#btn-clear-all').on('click', itemsController.clearAll)
+
+    $('#btn-back').on('click', itemsController.returnToLists)
+  }
+
+  return {
+    render: render
+  }
+})()
+</script>

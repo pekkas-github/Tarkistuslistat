@@ -1,0 +1,93 @@
+<script>
+
+const listsModel = (function() {
+
+  let lists = []
+
+  function addList(listName) {
+    if (!isUniqueName(listName)) {
+      alert('Nimi on jo olemassa!')
+      return
+    }
+
+    lists.push(listName)
+    listsController.dataChanged(lists)
+
+    google.script.run
+      .withFailureHandler((err) => {
+        listsController.errorAlert(err)
+      })
+      .apiCall('createList', listName)
+
+  }
+
+  function freshLoad() {
+
+    google.script.run
+      .withFailureHandler((err) => {
+        alert(`Server: ${err}`)
+      })
+      .withSuccessHandler((data) => {
+        lists = data
+        listsController.dataChanged(lists)
+      })
+      .apiCall('getFrontPageLists')
+
+  }
+
+  function removeList(listName) {
+    const index = lists.indexOf(listName)
+
+  // Delete list from lists array
+    lists.splice(index, 1)
+    listsController.dataChanged(lists)
+
+  // Send delete info to server
+    google.script.run
+      .withFailureHandler((err) => {
+        listsController.errorAlert(err)
+      })
+      .apiCall('deleteList', listName)
+
+  }
+
+  function renameList(newName, oldName) {
+
+    // Name already exists
+    if(!isUniqueName(newName)) {
+      alert('Nimi on jo olemassa!')
+      return
+    }
+    
+    // Change name
+    const index = lists.indexOf(oldName)
+    lists.splice(index, 1, newName)
+    listsController.dataChanged(lists)
+
+    // Send rename info to server
+    google.script.run
+      .withFailureHandler( (err) => {
+        listsController.errorAlert(err)
+      })
+      .apiCall('renameList', oldName, newName) 
+
+  }
+
+  function isUniqueName(newName) {
+
+    const res =  lists.every( name => {
+      return (name !== newName)
+    })
+
+    return res
+  }
+
+  return {
+    addList: addList,
+    freshLoad: freshLoad,
+    removeList: removeList,
+    renameList: renameList
+  }  
+
+})()
+</script>

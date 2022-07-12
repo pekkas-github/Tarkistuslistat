@@ -1,0 +1,67 @@
+<script>
+
+const listsController = (function() {
+
+  function addListRequest(listName) {
+    popup.input({
+      header: 'Uusi tarkistuslista:',
+      content: ' -- Uusi lista --',
+      callback: listsController.addListConfirm
+    })
+  }
+
+  function addListConfirm(listName) {
+    listsModel.addList(listName)
+  }
+
+  function dataChanged(lists) {
+    listsTableView.render(lists)
+  }
+
+
+  function errorAlert(err) {
+    alert(err)
+    spinner.on()
+    listsModel.freshLoad()
+  }
+
+  function initialLoadRequest() {
+    spinner.on()
+    listsHeaderView.render()
+    listsModel.freshLoad()
+  }
+
+  function openListRequest(listName) {
+    itemsController.initialLoad(listName)
+  }
+
+  function removeListRequest(listName) {
+    popup.info({
+      header: 'Poistetaanko lista:',
+      content: listName,
+      callback: listsController.removeListConfirm,
+      param: listName
+    })
+  }
+
+  function removeListConfirm(listName) {
+    listsModel.removeList(listName)
+  }
+
+  function renameListRequest(newName, oldName) {
+    listsModel.renameList(newName, oldName)
+  }
+
+  return {
+    addList: addListRequest,
+    addListConfirm: addListConfirm,
+    dataChanged: dataChanged,
+    errorAlert: errorAlert,
+    initialLoad: initialLoadRequest,
+    openList: openListRequest,
+    removeList: removeListRequest,
+    removeListConfirm: removeListConfirm,
+    renameList: renameListRequest
+  }
+})()
+</script>
