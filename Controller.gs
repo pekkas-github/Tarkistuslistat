@@ -15,6 +15,7 @@ class Controller {
       .evaluate()
       .setTitle('Tarkistuslistat')
       .setFaviconUrl(app.favicon)
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
   }
 
   addItem (params) {
