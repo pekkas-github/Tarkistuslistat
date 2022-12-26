@@ -11,8 +11,8 @@ const itemsTableView = (function() {
   function renderTable (items) {
     // Sort items in alphabetical order based on the content text
     items.sort( (a,b) => {
-      const a2 = $(`<p> ${a[2]}</p>`).text().toLowerCase()
-      const b2 = $(`<p> ${b[2]}</p>`).text().toLowerCase()
+      const a2 = $(`<p> ${a.list_item}</p>`).text().toLowerCase()
+      const b2 = $(`<p> ${b.list_item}</p>`).text().toLowerCase()
       if (a2 < b2) { return -1}
       if (a2 > b2) { return 1}
       return 0
@@ -24,9 +24,9 @@ const itemsTableView = (function() {
     // item [id, checked, itemName]
     items.forEach( item => {
       table += `
-        <tr id="${item[0]}">
-          <td><input type="checkbox" class="checkbox" ${item[1]}> 
-          <td class="item-header">${item[2]}</td>
+        <tr id="${item.id}">
+          <td><input type="checkbox" class="checkbox" ${item.checked}> 
+          <td class="item-header">${item.list_item}</td>
           <td class="edit-button" title="Muokkaa nimeä">&#x270D;</td>
           <td class="delete-button" title="Poista lista"> &#x2718;</td>
         </tr>`
