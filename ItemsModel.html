@@ -40,7 +40,7 @@ const itemsModel = (function() {
     }
 
     // lisää rivi lokaaliin taulukkoon
-    const newItem = [0, '', itemName]
+    const newItem = {id: 0, checked: '', list_item: itemName}
     items.push(newItem)
     itemsController.dataChanged(items)
 
@@ -50,8 +50,8 @@ const itemsModel = (function() {
       })
       .withSuccessHandler((id) => {
         items.forEach( (item) => {
-          if (item[0] === 0) {
-            item[0] = id
+          if (item.id === 0) {
+            item.id = id
             itemsController.dataChanged(items)
           }
         })
@@ -64,7 +64,7 @@ const itemsModel = (function() {
   clearAll: function() {
 
     items.forEach( (item) => {
-      item[1] = ''
+      item.checked = ''
     })
     itemsController.dataChanged(items)
 
@@ -79,7 +79,7 @@ const itemsModel = (function() {
   removeItem: function(id) {
 
     const index = items.findIndex( (item) => {
-      return item[0] === id
+      return item.id === id
     })
     items.splice(index, 1)
     itemsController.dataChanged(items)
@@ -100,8 +100,8 @@ const itemsModel = (function() {
     }
 
     items.forEach( (item) => {
-      if (item[0] === id) {
-        item[2] = newName
+      if (item.id === id) {
+        item.list_item = newName
       }
     })
     itemsController.dataChanged(items)
